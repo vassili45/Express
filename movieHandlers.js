@@ -1,45 +1,62 @@
+const database = require("./database");
 const movies = [
   {
     id: 1,
-    title: "Citizen Kane",
-    director: "Orson Wells",
-    year: "1941",
-    colors: false,
-    duration: 120,
+    firstname: "Citizen Kane",
+    lastname: "Orson Wells",
+    email: "1941",
+    city: false,
+    language: 120,
   },
   {
     id: 2,
-    title: "The Godfather",
-    director: "Francis Ford Coppola",
-    year: "1972",
-    colors: true,
-    duration: 180,
+    firstname: "The Godfather",
+    lastname: "Francis Ford Coppola",
+    email: "1972",
+    city: true,
+    language: 180,
   },
   {
     id: 3,
-    title: "Pulp Fiction",
-    director: "Quentin Tarantino",
-    year: "1994",
-    color: true,
-    duration: 180,
+    firstname: "Pulp Fiction",
+    lastname: "Quentin Tarantino",
+    email: "1994",
+    city: true,
+    language: 180,
   },
 ];
 
 const getMovies = (req, res) => {
-  res.json(movies);
+  database
+    .query("select * from movies")
+    .then(([movies]) => {
+      res.json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
 };
 
 const getMovieById = (req, res) => {
   const id = parseInt(req.params.id);
 
-  const movie = movies.find((movie) => movie.id === id);
-
-  if (movie != null) {
-    res.json(movie);
-  } else {
-    res.status(404).send("Not Found");
-  }
+  database
+    .query("select * from movies where id = ?", [id])
+    .then(([movies]) => {
+      if (movies[0] != null) {
+        res.json(movies[0]);
+      } else {
+        res.status(404).send("Not Found");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
 };
+
+
 
 module.exports = {
   getMovies,
